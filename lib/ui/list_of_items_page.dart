@@ -14,29 +14,32 @@ class ListOfItemsPage extends StatefulWidget {
 }
 
 class _ListOfItemsPageState extends State<ListOfItemsPage> {
-  Future<List<User>> users = getUsers();
+  // Future<List<User>> users = getUsers();
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   users = getUsers(context);
-  // }
+  late Future<List<User>> users;
+  @override
+  void initState() {
+    super.initState();
+    users = getUsers(context);
+  }
 
-  static Future<List<User>> getUsers() async {
-    // final assetBundle = DefaultAssetBundle.of(context);
-    // final data = await assetBundle.loadString('assets/users.json');
-    //
-    // final body = json.decode(data);
-    // return body.map<User>(User.fromJson).toList();
+  static Future<List<User>> getUsers(BuildContext context) async {
+    final assetBundle = DefaultAssetBundle.of(context);
+    final data = await assetBundle.loadString('assets/users.json');
 
-    const url =
-        'https://raw.githubusercontent.com/mdajgarhossain/users-hub/master/src/usersData/users.json';
-
-    final response = await http.get(Uri.parse(url));
-    final body = json.decode(response.body);
-
+    final body = json.decode(data);
     return body.map<User>(User.fromJson).toList();
   }
+
+  // static Future<List<User>> getUsers() async {
+  //   const url =
+  //       'https://raw.githubusercontent.com/mdajgarhossain/users-hub/master/src/usersData/users.json';
+  //
+  //   final response = await http.get(Uri.parse(url));
+  //   final body = json.decode(response.body);
+  //
+  //   return body.map<User>(User.fromJson).toList();
+  // }
 
   @override
   Widget build(BuildContext context) {
