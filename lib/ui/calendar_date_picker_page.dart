@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:implementation_test_app/ui/list_of_items_page.dart';
 
 class DatePickerPage extends StatefulWidget {
   const DatePickerPage({
@@ -56,7 +57,12 @@ class _DatePickerPageState extends State<DatePickerPage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const ListOfItemsPage()),
+          );
+        },
         tooltip: 'Increment',
         child: const Icon(Icons.navigate_next),
       ), // This trailing comma makes auto-formatting nicer for build methods.
