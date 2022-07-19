@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:implementation_test_app/model/user.dart';
+import 'package:http/http.dart' as http;
 
 class ListOfItemsPage extends StatefulWidget {
   const ListOfItemsPage({
@@ -11,25 +14,28 @@ class ListOfItemsPage extends StatefulWidget {
 }
 
 class _ListOfItemsPageState extends State<ListOfItemsPage> {
-  List<User> users = getUsers();
+  Future<List<User>> users = getUsers();
 
-  static List<User> getUsers() {
-    const data = [
-      {
-        "name": "Leanne Graham",
-        "email": "Sincere@april.biz",
-        "imageUrl":
-            "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60"
-      },
-      {
-        "name": "Ervin Howell",
-        "email": "Shanna@melissa.tv",
-        "imageUrl":
-            "https://images.unsplash.com/photo-1534030347209-467a5b0ad3e6?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60"
-      },
-    ];
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   users = getUsers(context);
+  // }
 
-    return data.map<User>(User.fromJson).toList();
+  static Future<List<User>> getUsers() async {
+    // final assetBundle = DefaultAssetBundle.of(context);
+    // final data = await assetBundle.loadString('assets/users.json');
+    //
+    // final body = json.decode(data);
+    // return body.map<User>(User.fromJson).toList();
+
+    const url =
+        'https://raw.githubusercontent.com/mdajgarhossain/users-hub/master/src/usersData/users.json';
+
+    final response = await http.get(Uri.parse(url));
+    final body = json.decode(response.body);
+
+    return body.map<User>(User.fromJson).toList();
   }
 
   @override
@@ -40,7 +46,19 @@ class _ListOfItemsPageState extends State<ListOfItemsPage> {
         centerTitle: true,
       ),
       body: Center(
-        child: buildUsers(users),
+        child: FutureBuilder<List<User>>(
+          future: users,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const CircularProgressIndicator();
+            } else if (snapshot.hasData) {
+              final users = snapshot.data!;
+              return buildUsers(users);
+            } else {
+              return const Text('No user data');
+            }
+          },
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {},
@@ -59,7 +77,7 @@ class _ListOfItemsPageState extends State<ListOfItemsPage> {
             child: ListTile(
               leading: CircleAvatar(
                 radius: 28,
-                backgroundImage: NetworkImage(user.imageUrl),
+                backgroundImage: NetworkImage(user.image),
               ),
               title: Text(user.name),
               subtitle: Text(user.email),
