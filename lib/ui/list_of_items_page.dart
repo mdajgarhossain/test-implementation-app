@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:implementation_test_app/model/user.dart';
 
 class ListOfItemsPage extends StatefulWidget {
   const ListOfItemsPage({
@@ -10,48 +11,36 @@ class ListOfItemsPage extends StatefulWidget {
 }
 
 class _ListOfItemsPageState extends State<ListOfItemsPage> {
-  List<Card> getItem() {
-    return [
-      itemView(
-          'John',
-          'https://images.unsplash.com/photo-1531297484001-80022131f5a1?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8M3x8dGVjaG5vbG9neXxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60',
-          '2022/07/19'),
-      itemView(
-          'Smith',
-          'https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Nnx8dGVjaG5vbG9neXxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60',
-          '2022/07/19'),
-      itemView(
-          'Smith',
-          'https://images.unsplash.com/photo-1523961131990-5ea7c61b2107?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8NXx8dGVjaHxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60',
-          '2022/07/19')
-    ];
-  }
+  List<User> users = getUsers();
 
-  itemView(name, imageUrl, date) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 13),
-        child: ListTile(
-          leading: Image.network(imageUrl),
-          title: Text(name),
-          subtitle: Text(date),
-        ),
-      ),
-    );
+  static List<User> getUsers() {
+    const data = [
+      {
+        "name": "Leanne Graham",
+        "email": "Sincere@april.biz",
+        "imageUrl":
+            "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60"
+      },
+      {
+        "name": "Ervin Howell",
+        "email": "Shanna@melissa.tv",
+        "imageUrl":
+            "https://images.unsplash.com/photo-1534030347209-467a5b0ad3e6?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60"
+      },
+    ];
+
+    return data.map<User>(User.fromJson).toList();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('List Of Items'),
+        title: const Text('List View With JSON'),
         centerTitle: true,
       ),
       body: Center(
-        child: Column(
-          // mainAxisAlignment: MainAxisAlignment.center,
-          children: getItem(),
-        ),
+        child: buildUsers(users),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {},
@@ -60,4 +49,22 @@ class _ListOfItemsPageState extends State<ListOfItemsPage> {
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
+
+  Widget buildUsers(List<User> users) => ListView.builder(
+        itemCount: users.length,
+        itemBuilder: (context, index) {
+          final user = users[index];
+
+          return Card(
+            child: ListTile(
+              leading: CircleAvatar(
+                radius: 28,
+                backgroundImage: NetworkImage(user.imageUrl),
+              ),
+              title: Text(user.name),
+              subtitle: Text(user.email),
+            ),
+          );
+        },
+      );
 }
